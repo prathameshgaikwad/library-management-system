@@ -8,12 +8,12 @@ package librarymanagement;
  *
  * @author prath
  */
-public class Reports_AvailableBooks extends javax.swing.JFrame {
+public class Reports_BooksIssued extends javax.swing.JFrame {
 
     /**
      * Creates new form AddPublisher
      */
-    public Reports_AvailableBooks() {
+    public Reports_BooksIssued() {
         initComponents();
     }
 
@@ -33,10 +33,10 @@ public class Reports_AvailableBooks extends javax.swing.JFrame {
         buttonShowBooks = new javax.swing.JButton();
         buttonHome = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
-        tableAvailableBooks = new javax.swing.JTable();
+        tableIssuedBooks = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Available Books");
+        setTitle("Issued Books");
 
         jPanel1.setBackground(new java.awt.Color(51, 51, 51));
 
@@ -46,7 +46,7 @@ public class Reports_AvailableBooks extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Inter", 1, 24)); // NOI18N
         jLabel1.setForeground(new java.awt.Color(255, 255, 255));
         jLabel1.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        jLabel1.setText("Books Available to Issue");
+        jLabel1.setText("Books Issued to Members");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -84,22 +84,22 @@ public class Reports_AvailableBooks extends javax.swing.JFrame {
             }
         });
 
-        tableAvailableBooks.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
-        tableAvailableBooks.setModel(new javax.swing.table.DefaultTableModel(
+        tableIssuedBooks.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        tableIssuedBooks.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+                {null, null, null, null, null},
+                {null, null, null, null, null},
+                {null, null, null, null, null}
             },
             new String [] {
-                "ID", "Title", "Publisher", "Publisher ID", "Edition", "Pages", "Price", "Purchased On:"
+                "Book ID", "Book Title", "Member ID", "Member Name", "Issued On"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.String.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -110,7 +110,7 @@ public class Reports_AvailableBooks extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
-        jScrollPane1.setViewportView(tableAvailableBooks);
+        jScrollPane1.setViewportView(tableIssuedBooks);
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -183,14 +183,78 @@ public class Reports_AvailableBooks extends javax.swing.JFrame {
                 }
             }
         } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(Reports_AvailableBooks.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Reports_BooksIssued.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(Reports_AvailableBooks.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Reports_BooksIssued.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(Reports_AvailableBooks.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Reports_BooksIssued.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         } catch (javax.swing.UnsupportedLookAndFeelException ex) {
-            java.util.logging.Logger.getLogger(Reports_AvailableBooks.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            java.util.logging.Logger.getLogger(Reports_BooksIssued.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
+        //</editor-fold>
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
@@ -259,7 +323,7 @@ public class Reports_AvailableBooks extends javax.swing.JFrame {
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
-                new Reports_AvailableBooks().setVisible(true);
+                new Reports_BooksIssued().setVisible(true);
             }
         });
     }
@@ -272,6 +336,6 @@ public class Reports_AvailableBooks extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
-    private javax.swing.JTable tableAvailableBooks;
+    private javax.swing.JTable tableIssuedBooks;
     // End of variables declaration//GEN-END:variables
 }

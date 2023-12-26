@@ -489,7 +489,7 @@ public class Home extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonAvailableBooksActionPerformed
 
     private void buttonIssuedBooksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonIssuedBooksActionPerformed
-        new Reports_IssuedBooks().setVisible(true);
+        new Reports_BooksIssued().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_buttonIssuedBooksActionPerformed
 
