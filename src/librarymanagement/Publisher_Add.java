@@ -4,6 +4,11 @@
  */
 package librarymanagement;
 
+import java.sql.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author prath
@@ -132,6 +137,11 @@ public class Publisher_Add extends javax.swing.JFrame {
         buttonAddData.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         buttonAddData.setForeground(new java.awt.Color(51, 51, 51));
         buttonAddData.setText("Add Data");
+        buttonAddData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAddDataActionPerformed(evt);
+            }
+        });
 
         buttonHome.setBackground(new java.awt.Color(204, 255, 255));
         buttonHome.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
@@ -258,14 +268,65 @@ public class Publisher_Add extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldPubID.setText("");
-       txtFieldPubName.setText("");
-       txtFieldPubAddress.setText("");
-       txtFieldPubCity.setText("");
-       txtFieldPubCountry.setText("");
-       txtFieldPubPhone.setText("");
-       txtFieldPubEmail.setText("");
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
+
+    private void buttonAddDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddDataActionPerformed
+
+        if (txtFieldPubID.getText().trim().isEmpty() || txtFieldPubName.getText().trim().isEmpty() || txtFieldPubAddress.getText().trim().isEmpty() || txtFieldPubCity.getText().trim().isEmpty() || txtFieldPubCountry.getText().trim().isEmpty() || txtFieldPubPhone.getText().trim().isEmpty() || txtFieldPubPhone.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields!");
+            return;
+        }
+
+        try {
+            int intValue = Integer.parseInt(txtFieldPubID.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "id should be an integer");
+            return;
+        }
+
+        int pub_id = Integer.parseInt(txtFieldPubID.getText().trim());
+        String pub_name = txtFieldPubName.getText().trim();
+        String pub_address = txtFieldPubAddress.getText().trim();
+        String pub_city = txtFieldPubCity.getText().trim();
+        String pub_country = txtFieldPubCountry.getText().trim();
+        String pub_phone = txtFieldPubPhone.getText().trim();
+        String pub_email = txtFieldPubEmail.getText().trim();
+
+        String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(txtFieldPubEmail.getText().trim());
+
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address");
+            return;
+        }
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO publishers (id, name, address, city, country, phone, email) VALUES (?, ?, ?, ?, ?, ?, ?)");
+
+            preparedStatement.setInt(1, pub_id);
+            preparedStatement.setString(2, pub_name.toLowerCase());
+            preparedStatement.setString(3, pub_address.toLowerCase());
+            preparedStatement.setString(4, pub_city.toLowerCase());
+            preparedStatement.setString(5, pub_country.toLowerCase());
+            preparedStatement.setString(6, pub_phone.toLowerCase());
+            preparedStatement.setString(7, pub_email.toLowerCase());
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                JOptionPane.showMessageDialog(this, pub_name + " added successfully!");
+            }
+            con.close();
+            clearInputs();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+        }
+    }//GEN-LAST:event_buttonAddDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -303,6 +364,16 @@ public class Publisher_Add extends javax.swing.JFrame {
         });
     }
 
+    public void clearInputs() {
+        txtFieldPubID.setText("");
+        txtFieldPubName.setText("");
+        txtFieldPubAddress.setText("");
+        txtFieldPubCity.setText("");
+        txtFieldPubCountry.setText("");
+        txtFieldPubPhone.setText("");
+        txtFieldPubEmail.setText("");
+    }
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton buttonAddData;
     private javax.swing.JButton buttonClear;
@@ -326,4 +397,5 @@ public class Publisher_Add extends javax.swing.JFrame {
     private javax.swing.JTextField txtFieldPubName;
     private javax.swing.JTextField txtFieldPubPhone;
     // End of variables declaration//GEN-END:variables
+
 }

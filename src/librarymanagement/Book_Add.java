@@ -280,7 +280,7 @@ public class Book_Add extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonAddDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddDataActionPerformed
-        // TODO add your handling code here:
+        
     }//GEN-LAST:event_buttonAddDataActionPerformed
 
     /**
