@@ -4,6 +4,12 @@
  */
 package librarymanagement;
 
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+
 /**
  *
  * @author prath
@@ -34,12 +40,12 @@ public class Book_Add extends javax.swing.JFrame {
         jLabel3 = new javax.swing.JLabel();
         jLabel4 = new javax.swing.JLabel();
         txtFieldBookTitle = new javax.swing.JTextField();
-        txtFieldBookPublisher = new javax.swing.JTextField();
+        txtFieldPublisherId = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txtFieldBookPages = new javax.swing.JTextField();
         jLabel6 = new javax.swing.JLabel();
         jLabel7 = new javax.swing.JLabel();
-        txtFieldBookPublisherID = new javax.swing.JTextField();
+        txtFieldPublisherName = new javax.swing.JTextField();
         txtFieldBookEdition = new javax.swing.JTextField();
         jLabel8 = new javax.swing.JLabel();
         jLabel9 = new javax.swing.JLabel();
@@ -80,10 +86,15 @@ public class Book_Add extends javax.swing.JFrame {
         jLabel2.setText("Book ID:");
 
         txtFieldBookID.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldBookID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFieldBookIDActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel3.setText("(Press Enter to fill)");
+        jLabel3.setText("(Press Enter to get latest)");
 
         jLabel4.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
         jLabel4.setForeground(new java.awt.Color(255, 255, 204));
@@ -91,11 +102,16 @@ public class Book_Add extends javax.swing.JFrame {
 
         txtFieldBookTitle.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
 
-        txtFieldBookPublisher.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldPublisherId.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldPublisherId.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFieldPublisherIdActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
         jLabel5.setForeground(new java.awt.Color(255, 255, 204));
-        jLabel5.setText("Publisher:");
+        jLabel5.setText("Publisher ID:");
 
         txtFieldBookPages.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
 
@@ -105,9 +121,14 @@ public class Book_Add extends javax.swing.JFrame {
 
         jLabel7.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
         jLabel7.setForeground(new java.awt.Color(255, 255, 204));
-        jLabel7.setText("Publisher ID:");
+        jLabel7.setText("Publisher:");
 
-        txtFieldBookPublisherID.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldPublisherName.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldPublisherName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFieldPublisherNameActionPerformed(evt);
+            }
+        });
 
         txtFieldBookEdition.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
 
@@ -159,7 +180,7 @@ public class Book_Add extends javax.swing.JFrame {
 
         jLabel12.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel12.setText("(DD-MM-YYYY)");
+        jLabel12.setText("(YYYY-MM-DD)");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -195,8 +216,8 @@ public class Book_Add extends javax.swing.JFrame {
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                             .addComponent(txtFieldBookEdition)
                             .addComponent(txtFieldBookTitle)
-                            .addComponent(txtFieldBookPublisher)
-                            .addComponent(txtFieldBookPublisherID)
+                            .addComponent(txtFieldPublisherId)
+                            .addComponent(txtFieldPublisherName)
                             .addComponent(txtFieldBookPages)
                             .addComponent(txtFieldBookPurchaseDate, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
@@ -220,11 +241,11 @@ public class Book_Add extends javax.swing.JFrame {
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
-                    .addComponent(txtFieldBookPublisher, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFieldPublisherId, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel7)
-                    .addComponent(txtFieldBookPublisherID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtFieldPublisherName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel8)
@@ -270,18 +291,133 @@ public class Book_Add extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldBookID.setText("");
-       txtFieldBookTitle.setText("");
-       txtFieldBookPublisher.setText("");
-       txtFieldBookPublisherID.setText("");
-       txtFieldBookEdition.setText("");
-       txtFieldBookPages.setText("");
-       txtFieldBookPurchaseDate.setText("");
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonAddDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddDataActionPerformed
-        
+        if (txtFieldBookID.getText().trim().isEmpty() || txtFieldBookTitle.getText().trim().isEmpty() || txtFieldPublisherId.getText().trim().isEmpty() || txtFieldPublisherName.getText().trim().isEmpty() || txtFieldBookEdition.getText().trim().isEmpty() || txtFieldBookPages.getText().trim().isEmpty() || txtFieldBookPurchaseDate.getText().trim().isEmpty() || txtFieldBookPrice.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields!");
+            return;
+        }
+
+        try {
+            int bookId = Integer.parseInt(txtFieldBookID.getText().trim());
+            int pubId = Integer.parseInt(txtFieldPublisherId.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        try {
+            int pages = Integer.parseInt(txtFieldBookPages.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Pages should be an integer");
+            return;
+        }
+
+        String date = txtFieldBookPurchaseDate.getText().trim();
+        String DATE_REGEX = "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$";
+        Pattern pattern = Pattern.compile(DATE_REGEX);
+        Matcher matcher = pattern.matcher(date);
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "Please follow the date format!");
+            return;
+        }
+
+        try {
+            new BigDecimal(txtFieldBookPrice.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Enter price as a numeric value");
+        }
+
+        int book_id = Integer.parseInt(txtFieldBookID.getText().trim());
+        String book_title = txtFieldBookTitle.getText().trim();
+        String book_publisher = txtFieldPublisherName.getText().trim();
+        int book_pubId = Integer.parseInt(txtFieldPublisherId.getText().trim());
+        String book_edition = txtFieldBookEdition.getText().trim();
+        int book_pages = Integer.parseInt(txtFieldBookPages.getText().trim());
+        String book_purchaseDate = txtFieldBookPurchaseDate.getText().trim();
+        double book_price = Double.parseDouble(txtFieldBookPrice.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("INSERT INTO books (id, title, publisher, publisher_id, edition, pages, purchased_on, price) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
+
+            preparedStatement.setInt(1, book_id);
+            preparedStatement.setString(2, book_title.toLowerCase());
+            preparedStatement.setString(3, book_publisher.toLowerCase());
+            preparedStatement.setInt(4, book_pubId);
+            preparedStatement.setString(5, book_edition.toLowerCase());
+            preparedStatement.setInt(6, book_pages);
+            preparedStatement.setString(7, book_purchaseDate);
+            preparedStatement.setDouble(8, book_price);
+
+            int rowsInserted = preparedStatement.executeUpdate();
+            if (rowsInserted > 0) {
+                JOptionPane.showMessageDialog(this, book_title + " added successfully!");
+            }
+            con.close();
+            clearInputs();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_buttonAddDataActionPerformed
+
+    private void txtFieldPublisherNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldPublisherNameActionPerformed
+       
+    }//GEN-LAST:event_txtFieldPublisherNameActionPerformed
+
+    private void txtFieldPublisherIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldPublisherIdActionPerformed
+         int book_pubId = Integer.parseInt(txtFieldPublisherId.getText().trim());
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            Statement statement = con.createStatement();
+
+            String sqlQuery = "SELECT name FROM publishers WHERE id = " + book_pubId;
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            if (resultSet.next()) {
+                String publisherName = resultSet.getString("name");
+                txtFieldPublisherName.setText(publisherName);
+            } else {
+                System.out.println("No publisher found for ID: " + book_pubId);
+            }
+
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_txtFieldPublisherIdActionPerformed
+
+    private void txtFieldBookIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldBookIDActionPerformed
+
+        
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            Statement statement = con.createStatement();
+
+            String sqlQuery = "SELECT id FROM books ORDER BY id DESC LIMIT 1";
+            ResultSet resultSet = statement.executeQuery(sqlQuery);
+
+            if (resultSet.next()) {
+                int bookID = resultSet.getInt("id");
+                int newBookId = bookID + 1;
+                txtFieldBookID.setText(newBookId + "");
+            } else {
+                System.out.println("don't know");
+            }
+
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_txtFieldBookIDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -346,9 +482,20 @@ public class Book_Add extends javax.swing.JFrame {
     private javax.swing.JTextField txtFieldBookID;
     private javax.swing.JTextField txtFieldBookPages;
     private javax.swing.JTextField txtFieldBookPrice;
-    private javax.swing.JTextField txtFieldBookPublisher;
-    private javax.swing.JTextField txtFieldBookPublisherID;
     private javax.swing.JTextField txtFieldBookPurchaseDate;
     private javax.swing.JTextField txtFieldBookTitle;
+    private javax.swing.JTextField txtFieldPublisherId;
+    private javax.swing.JTextField txtFieldPublisherName;
     // End of variables declaration//GEN-END:variables
+
+    private void clearInputs() {
+        txtFieldBookID.setText("");
+        txtFieldBookTitle.setText("");
+        txtFieldPublisherId.setText("");
+        txtFieldPublisherName.setText("");
+        txtFieldBookEdition.setText("");
+        txtFieldBookPages.setText("");
+        txtFieldBookPurchaseDate.setText("");
+        txtFieldBookPrice.setText("");
+    }
 }
