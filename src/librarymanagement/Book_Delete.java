@@ -4,6 +4,10 @@
  */
 package librarymanagement;
 
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author prath
@@ -82,6 +86,11 @@ public class Book_Delete extends javax.swing.JFrame {
         buttonDeleteData.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         buttonDeleteData.setForeground(new java.awt.Color(51, 51, 51));
         buttonDeleteData.setText("Delete Data");
+        buttonDeleteData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDeleteDataActionPerformed(evt);
+            }
+        });
 
         buttonHome.setBackground(new java.awt.Color(204, 255, 255));
         buttonHome.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
@@ -106,19 +115,17 @@ public class Book_Delete extends javax.swing.JFrame {
         tableBookData.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         tableBookData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "ID", "Title", "Publisher", "Publisher ID", "Edition", "Pages", "Price", "Purchased On:"
+                "ID", "Title", "Author", "Publisher", "Publisher ID", "Edition", "Pages", "Purchased On", "Price"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Integer.class, java.lang.Double.class, java.lang.String.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Integer.class, java.lang.String.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -129,6 +136,7 @@ public class Book_Delete extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tableBookData.setRowHeight(30);
         jScrollPane1.setViewportView(tableBookData);
 
         jLabel3.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
@@ -141,28 +149,29 @@ public class Book_Delete extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addContainerGap(42, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jLabel3)
-                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(22, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                        .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jLabel3)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addGap(283, 283, 283)
                             .addComponent(jLabel2)
                             .addGap(18, 18, 18)
                             .addComponent(txtFieldBookID, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGap(27, 27, 27)
                             .addComponent(buttonSearch)
                             .addGap(233, 233, 233))
-                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 763, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGap(21, 21, 21)))
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(buttonClear)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonDeleteData, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addComponent(buttonHome)
-                        .addGap(46, 46, 46))))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(buttonClear)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(buttonDeleteData, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                            .addComponent(buttonHome)
+                            .addGap(46, 46, 46)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 783, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(21, 21, 21))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -207,16 +216,99 @@ public class Book_Delete extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldBookID.setText("");
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSearchActionPerformed
-        // TODO add your handling code here:
+        if (txtFieldBookID.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter the book ID.");
+            return;
+        }
+
+        try {
+            int pages = Integer.parseInt(txtFieldBookID.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        int book_id = Integer.parseInt(txtFieldBookID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM books WHERE id = ?");
+
+            preparedStatement.setInt(1, book_id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            DefaultTableModel model = (DefaultTableModel) tableBookData.getModel();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "No book with the ID: " + book_id);
+            } else {
+                do {
+                    int bookId = rs.getInt("id");
+                    String bookTitle = rs.getString("title");
+                    String author = rs.getString("author");
+                    String publisher = rs.getString("publisher");
+                    int publisher_id = rs.getInt("publisher_id");
+                    String edition = rs.getString("edition");
+                    int pages = rs.getInt("pages");
+                    String purchased_on = rs.getString("purchased_on");
+                    Double price = rs.getDouble("price");
+
+                    model.addRow(new Object[]{bookId, bookTitle, author, publisher, publisher_id, edition, pages, purchased_on, price});
+                } while (rs.next());
+            }
+
+            con.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
+
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+
+        }
+
     }//GEN-LAST:event_buttonSearchActionPerformed
 
+    private void buttonDeleteDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDeleteDataActionPerformed
+
+        int book_id = Integer.parseInt(txtFieldBookID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("DELETE FROM books WHERE id = ?");
+
+            preparedStatement.setInt(1, book_id);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                String bookNameString = "";
+                Object bookName = tableBookData.getValueAt(0, 1); 
+
+                if (bookName != null) {
+                    bookNameString = bookName.toString();}
+                    JOptionPane.showMessageDialog(this, "Book (" + bookNameString + ") deleted successfully.");
+                    clearInputs();
+                } else {
+                    JOptionPane.showMessageDialog(this, "No book with the ID: " + book_id);
+                }
+                con.close();
+
+            }catch (ClassNotFoundException | SQLException e) {
+
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+
+        }
+    }//GEN-LAST:event_buttonDeleteDataActionPerformed
+
     /**
-     * @param args the command line arguments
-     */
+         * @param args the command line arguments
+         */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -295,4 +387,10 @@ public class Book_Delete extends javax.swing.JFrame {
     private javax.swing.JTable tableBookData;
     private javax.swing.JTextField txtFieldBookID;
     // End of variables declaration//GEN-END:variables
+
+    private void clearInputs() {
+        txtFieldBookID.setText("");
+        DefaultTableModel model = (DefaultTableModel) tableBookData.getModel();
+        model.setRowCount(0);
+    }
 }
