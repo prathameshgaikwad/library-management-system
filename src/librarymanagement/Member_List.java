@@ -4,6 +4,14 @@
  */
 package librarymanagement;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author prath
@@ -37,10 +45,6 @@ public class Member_List extends javax.swing.JFrame {
         tableMembersData = new javax.swing.JTable();
         jLabel3 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
-        radioActiveMembers = new javax.swing.JRadioButton();
-        radioInactiveMembers = new javax.swing.JRadioButton();
-        radioAllMembers = new javax.swing.JRadioButton();
-        jLabel4 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Members List");
@@ -80,6 +84,11 @@ public class Member_List extends javax.swing.JFrame {
         buttonMembersData.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         buttonMembersData.setForeground(new java.awt.Color(51, 51, 51));
         buttonMembersData.setText("Get Data");
+        buttonMembersData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonMembersDataActionPerformed(evt);
+            }
+        });
 
         buttonHome.setBackground(new java.awt.Color(204, 255, 255));
         buttonHome.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
@@ -94,9 +103,7 @@ public class Member_List extends javax.swing.JFrame {
         tableMembersData.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         tableMembersData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Name", "Address", "Phone", "Email", "Member From", "Membership Fee", "Dues"
@@ -118,23 +125,13 @@ public class Member_List extends javax.swing.JFrame {
             }
         });
         jScrollPane1.setViewportView(tableMembersData);
+        if (tableMembersData.getColumnModel().getColumnCount() > 0) {
+            tableMembersData.getColumnModel().getColumn(0).setPreferredWidth(10);
+        }
 
         jLabel3.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 204));
         jLabel3.setText("Details:");
-
-        radioActiveMembers.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
-        radioActiveMembers.setText("Active");
-
-        radioInactiveMembers.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
-        radioInactiveMembers.setText("Inactive");
-
-        radioAllMembers.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
-        radioAllMembers.setText("All");
-
-        jLabel4.setFont(new java.awt.Font("Inter", 1, 12)); // NOI18N
-        jLabel4.setForeground(new java.awt.Color(255, 255, 204));
-        jLabel4.setText("Member Type:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -154,17 +151,8 @@ public class Member_List extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel3)
-                                .addGap(369, 369, 369)
-                                .addComponent(jLabel4)
-                                .addGap(18, 18, 18)
-                                .addComponent(radioActiveMembers)
-                                .addGap(18, 18, 18)
-                                .addComponent(radioInactiveMembers)
-                                .addGap(18, 18, 18)
-                                .addComponent(radioAllMembers)))
-                        .addGap(0, 46, Short.MAX_VALUE))))
+                            .addComponent(jLabel3))
+                        .addGap(0, 719, Short.MAX_VALUE))))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 755, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -175,13 +163,8 @@ public class Member_List extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(46, 46, 46)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jLabel3)
-                    .addComponent(radioActiveMembers)
-                    .addComponent(radioInactiveMembers)
-                    .addComponent(radioAllMembers)
-                    .addComponent(jLabel4))
-                .addGap(3, 3, 3)
+                .addComponent(jLabel3)
+                .addGap(5, 5, 5)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 350, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -215,6 +198,41 @@ public class Member_List extends javax.swing.JFrame {
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
        
     }//GEN-LAST:event_buttonClearActionPerformed
+
+    private void buttonMembersDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonMembersDataActionPerformed
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM members");
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            DefaultTableModel model = (DefaultTableModel) tableMembersData.getModel();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "No members!");
+            } else {
+                do {
+                    int memberId = rs.getInt("id");
+                    String memberName = rs.getString("name");
+                    String memberAddress = rs.getString("address");
+                    String memberPhone = rs.getString("phone");
+                    String memberEmail = rs.getString("email");
+                    String membershipStartDate = String.valueOf(rs.getDate("membership_start_date"));
+                    Double membershipFee = rs.getDouble("membership_fee");
+                    Double memberDues = rs.getDouble("dues");
+
+                    model.addRow(new Object[]{memberId, memberName, memberAddress, memberPhone, memberEmail, membershipStartDate, membershipFee, memberDues});
+                    
+                } while (rs.next());
+            }
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_buttonMembersDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -289,14 +307,10 @@ public class Member_List extends javax.swing.JFrame {
     private javax.swing.JButton buttonMembersData;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel3;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JSeparator jSeparator1;
-    private javax.swing.JRadioButton radioActiveMembers;
-    private javax.swing.JRadioButton radioAllMembers;
-    private javax.swing.JRadioButton radioInactiveMembers;
     private javax.swing.JTable tableMembersData;
     // End of variables declaration//GEN-END:variables
 }
