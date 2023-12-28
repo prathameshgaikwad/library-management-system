@@ -4,6 +4,16 @@
  */
 package librarymanagement;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author prath
@@ -77,6 +87,11 @@ public class Publisher_Modify extends javax.swing.JFrame {
         jLabel2.setText("Publisher ID:");
 
         txtFieldPubID.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldPubID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFieldPubIDActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(204, 204, 204));
@@ -132,6 +147,11 @@ public class Publisher_Modify extends javax.swing.JFrame {
         buttonModifyData.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         buttonModifyData.setForeground(new java.awt.Color(51, 51, 51));
         buttonModifyData.setText("Modify Data");
+        buttonModifyData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonModifyDataActionPerformed(evt);
+            }
+        });
 
         buttonHome.setBackground(new java.awt.Color(204, 255, 255));
         buttonHome.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
@@ -149,64 +169,61 @@ public class Publisher_Modify extends javax.swing.JFrame {
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel2, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(106, 106, 106)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtFieldPubID, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18)
-                        .addComponent(jLabel3)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addGap(0, 25, Short.MAX_VALUE)
-                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel4)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txtFieldPubName, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                .addGroup(jPanel1Layout.createSequentialGroup()
-                                    .addComponent(jLabel5)
-                                    .addGap(18, 18, 18)
-                                    .addComponent(txtFieldPubAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel7)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtFieldPubCity, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel8))
-                                .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(txtFieldPubCountry, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addComponent(txtFieldPubPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                                .addComponent(jLabel9)
-                                .addGap(18, 18, 18)
-                                .addComponent(txtFieldPubEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(12, 12, 12)
-                                .addComponent(buttonModifyData, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                        .addGap(129, 129, 129))))
-            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGap(33, 33, 33)
                 .addComponent(buttonClear)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(buttonModifyData, javax.swing.GroupLayout.PREFERRED_SIZE, 198, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(36, 36, 36)
                 .addComponent(buttonHome)
                 .addGap(28, 28, 28))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addGap(0, 114, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel4)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtFieldPubName, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(jPanel1Layout.createSequentialGroup()
+                            .addComponent(jLabel5)
+                            .addGap(18, 18, 18)
+                            .addComponent(txtFieldPubAddress, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel7)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtFieldPubCity, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8))
+                        .addGap(18, 18, 18)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(txtFieldPubCountry, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(txtFieldPubPhone, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel9)
+                        .addGap(18, 18, 18)
+                        .addComponent(txtFieldPubEmail, javax.swing.GroupLayout.PREFERRED_SIZE, 140, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(146, 146, 146))
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jLabel2)
+                .addGap(18, 18, 18)
+                .addComponent(txtFieldPubID, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(18, 18, 18)
+                .addComponent(jLabel3)
+                .addGap(75, 75, 75))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(49, 49, 49)
+                .addGap(55, 55, 55)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtFieldPubID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(18, 18, 18)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtFieldPubName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -258,14 +275,118 @@ public class Publisher_Modify extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldPubID.setText("");
-       txtFieldPubName.setText("");
-       txtFieldPubAddress.setText("");
-       txtFieldPubCity.setText("");
-       txtFieldPubCountry.setText("");
-       txtFieldPubPhone.setText("");
-       txtFieldPubEmail.setText("");
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
+
+    private void txtFieldPubIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldPubIDActionPerformed
+        if (txtFieldPubID.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter the publisher ID.");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(txtFieldPubID.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        int publisher_id = Integer.parseInt(txtFieldPubID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM publishers WHERE id = ?");
+
+            preparedStatement.setInt(1, publisher_id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "No publisher with the ID: " + publisher_id);
+            } else {
+                do {
+                    int publisherId = rs.getInt("id");
+                    String publisherName = rs.getString("name");
+                    String publisherAddress = rs.getString("address");
+                    String publisherCity = rs.getString("city");
+                    String publisherCountry = rs.getString("country");
+                    String publisherPhone = rs.getString("phone");
+                    String publisherEmail = rs.getString("email");
+
+                    txtFieldPubName.setText(publisherName);
+                    txtFieldPubAddress.setText(publisherAddress);
+                    txtFieldPubCity.setText(publisherCity);
+                    txtFieldPubCountry.setText(publisherCountry);
+                    txtFieldPubPhone.setText(publisherPhone);
+                    txtFieldPubEmail.setText(publisherEmail);
+
+                } while (rs.next());
+            }
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_txtFieldPubIDActionPerformed
+
+    private void buttonModifyDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonModifyDataActionPerformed
+        if (txtFieldPubID.getText().trim().isEmpty() || txtFieldPubName.getText().trim().isEmpty() || txtFieldPubAddress.getText().trim().isEmpty() || txtFieldPubCity.getText().trim().isEmpty() || txtFieldPubCountry.getText().trim().isEmpty() || txtFieldPubPhone.getText().trim().isEmpty() || txtFieldPubPhone.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields!");
+            return;
+        }
+
+        try {
+            int intValue = Integer.parseInt(txtFieldPubID.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        int pub_id = Integer.parseInt(txtFieldPubID.getText().trim());
+        String pub_name = txtFieldPubName.getText().trim();
+        String pub_address = txtFieldPubAddress.getText().trim();
+        String pub_city = txtFieldPubCity.getText().trim();
+        String pub_country = txtFieldPubCountry.getText().trim();
+        String pub_phone = txtFieldPubPhone.getText().trim();
+        String pub_email = txtFieldPubEmail.getText().trim();
+
+        String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+
+        Pattern pattern = Pattern.compile(EMAIL_REGEX);
+        Matcher matcher = pattern.matcher(txtFieldPubEmail.getText().trim());
+
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address");
+            return;
+        }
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE publishers SET name=?, address=?, city=?, country=?, phone=?, email=? WHERE id=?");
+
+            preparedStatement.setString(1, pub_name.toLowerCase());
+            preparedStatement.setString(2, pub_address.toLowerCase());
+            preparedStatement.setString(3, pub_city.toLowerCase());
+            preparedStatement.setString(4, pub_country.toLowerCase());
+            preparedStatement.setString(5, pub_phone.toLowerCase());
+            preparedStatement.setString(6, pub_email.toLowerCase());
+            preparedStatement.setInt(7, pub_id);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                JOptionPane.showMessageDialog(this, pub_name + " updated successfully!");
+            } else {
+                JOptionPane.showMessageDialog(this, "No record found for ID: " + pub_id);
+            }
+            con.close();
+            clearInputs();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+        }
+
+    }//GEN-LAST:event_buttonModifyDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -332,4 +453,13 @@ public class Publisher_Modify extends javax.swing.JFrame {
     private javax.swing.JTextField txtFieldPubName;
     private javax.swing.JTextField txtFieldPubPhone;
     // End of variables declaration//GEN-END:variables
+
+    private void clearInputs() {
+        txtFieldPubID.setText("");
+        txtFieldPubName.setText("");
+        txtFieldPubAddress.setText("");
+        txtFieldPubCity.setText("");
+        txtFieldPubCountry.setText("");
+        txtFieldPubPhone.setText("");
+        txtFieldPubEmail.setText("");    }
 }

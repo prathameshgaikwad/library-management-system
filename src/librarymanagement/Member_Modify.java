@@ -4,6 +4,13 @@
  */
 package librarymanagement;
 
+import java.math.BigDecimal;
+import java.sql.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author prath
@@ -48,7 +55,7 @@ public class Member_Modify extends javax.swing.JFrame {
         buttonModifyData = new javax.swing.JButton();
         buttonHome = new javax.swing.JButton();
         jLabel10 = new javax.swing.JLabel();
-        txtFieldMembershipFee1 = new javax.swing.JTextField();
+        txtFieldMemberDues = new javax.swing.JTextField();
         jLabel11 = new javax.swing.JLabel();
         checkBoxDuesCleared = new javax.swing.JCheckBox();
 
@@ -81,6 +88,11 @@ public class Member_Modify extends javax.swing.JFrame {
         jLabel2.setText("Member ID:");
 
         txtFieldMemberID.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldMemberID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFieldMemberIDActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(204, 204, 204));
@@ -156,7 +168,7 @@ public class Member_Modify extends javax.swing.JFrame {
         jLabel10.setForeground(new java.awt.Color(204, 204, 204));
         jLabel10.setText("(DD-MM-YYYY)");
 
-        txtFieldMembershipFee1.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldMemberDues.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
 
         jLabel11.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
         jLabel11.setForeground(new java.awt.Color(255, 255, 204));
@@ -165,6 +177,11 @@ public class Member_Modify extends javax.swing.JFrame {
         checkBoxDuesCleared.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         checkBoxDuesCleared.setForeground(new java.awt.Color(204, 255, 204));
         checkBoxDuesCleared.setText("Cleared");
+        checkBoxDuesCleared.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                checkBoxDuesClearedActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -212,7 +229,7 @@ public class Member_Modify extends javax.swing.JFrame {
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addGap(18, 18, 18)
-                        .addComponent(txtFieldMembershipFee1, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtFieldMemberDues, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(119, 119, 119)))
                 .addContainerGap(70, Short.MAX_VALUE))
         );
@@ -252,7 +269,7 @@ public class Member_Modify extends javax.swing.JFrame {
                     .addComponent(jLabel9))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(txtFieldMembershipFee1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtFieldMemberDues, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel11)
                     .addComponent(checkBoxDuesCleared))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 39, Short.MAX_VALUE)
@@ -283,19 +300,142 @@ public class Member_Modify extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldMemberID.setText("");
-       txtFieldMemberName.setText("");
-       txtFieldMemberAddress.setText("");
-       txtFieldMemberPhone.setText("");
-       txtFieldMemberEmail.setText("");
-       txtFieldMemberFrom.setText("");
-       txtFieldMembershipFee.setText("");
-       checkBoxDuesCleared.setSelected(false);
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonModifyDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonModifyDataActionPerformed
-        // TODO add your handling code here:
+        if (txtFieldMemberID.getText().trim().isEmpty() || txtFieldMemberName.getText().trim().isEmpty() || txtFieldMemberAddress.getText().trim().isEmpty() || txtFieldMemberPhone.getText().trim().isEmpty() || txtFieldMemberEmail.getText().trim().isEmpty() || txtFieldMemberFrom.getText().trim().isEmpty() || txtFieldMembershipFee.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields!");
+            return;
+        }
+
+        try {
+            int intValue = Integer.parseInt(txtFieldMemberID.getText());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        String EMAIL_REGEX = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        Pattern patternEmail = Pattern.compile(EMAIL_REGEX);
+        Matcher matcherEmail = patternEmail.matcher(txtFieldMemberEmail.getText().trim());
+
+        if (!matcherEmail.matches()) {
+            JOptionPane.showMessageDialog(this, "Please enter a valid email address");
+            return;
+        }
+
+        String date = txtFieldMemberFrom.getText().trim();
+        String DATE_REGEX = "^(\\d{4})-(0[1-9]|1[0-2])-(0[1-9]|[1-2][0-9]|3[0-1])$";
+        Pattern pattern = Pattern.compile(DATE_REGEX);
+        Matcher matcher = pattern.matcher(date);
+        if (!matcher.matches()) {
+            JOptionPane.showMessageDialog(this, "Please follow the date format!");
+            return;
+        }
+
+        try {
+            new BigDecimal(txtFieldMembershipFee.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "Enter fee as a numeric value");
+            return;
+        }
+
+        int member_id = Integer.parseInt(txtFieldMemberID.getText().trim());
+        String member_name = txtFieldMemberName.getText().trim();
+        String member_address = txtFieldMemberAddress.getText().trim();
+        String member_phone = txtFieldMemberPhone.getText().trim();
+        String member_email = txtFieldMemberEmail.getText().trim();
+        String member_from = txtFieldMemberFrom.getText().trim();
+        double membership_fee = Double.parseDouble(txtFieldMembershipFee.getText().trim());
+        double member_dues = Double.parseDouble(txtFieldMemberDues.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE members SET name=?, address=?, phone=?, email=?, membership_start_date=?, membership_fee=?, dues=? WHERE id=?");
+
+            preparedStatement.setString(1, member_name.toLowerCase());
+            preparedStatement.setString(2, member_address.toLowerCase());
+            preparedStatement.setString(3, member_phone.toLowerCase());
+            preparedStatement.setString(4, member_email.toLowerCase());
+            preparedStatement.setString(5, member_from.toLowerCase());
+            preparedStatement.setDouble(6, membership_fee);
+            
+            preparedStatement.setDouble(7, member_dues);
+            preparedStatement.setInt(8, member_id);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+            if (rowsUpdated > 0) {
+                JOptionPane.showMessageDialog(this, member_name + " updated successfully!");
+                clearInputs();
+            } else {
+                JOptionPane.showMessageDialog(this, "No record found for ID: " + member_id);
+            }
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+        }
     }//GEN-LAST:event_buttonModifyDataActionPerformed
+
+    private void txtFieldMemberIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldMemberIDActionPerformed
+       if (txtFieldMemberID.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter the member ID.");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(txtFieldMemberID.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        int member_id = Integer.parseInt(txtFieldMemberID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM members WHERE id = ?");
+
+            preparedStatement.setInt(1, member_id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "No member with the ID: " + member_id);
+            } else {
+                do {
+                    int memberId = rs.getInt("id");
+                    String memberName = rs.getString("name");
+                    String memberAddress = rs.getString("address");
+                    String memberPhone = rs.getString("phone");
+                    String memberEmail = rs.getString("email");
+                    String membershipStartDate = String.valueOf(rs.getDate("membership_start_date"));
+                    Double membershipFee = rs.getDouble("membership_fee");
+                    Double memberDues = rs.getDouble("dues");
+
+                    txtFieldMemberName.setText(memberName);
+                    txtFieldMemberAddress.setText(memberAddress);
+                    txtFieldMemberPhone.setText(memberPhone);
+                    txtFieldMemberEmail.setText(memberEmail);
+                    txtFieldMemberFrom.setText(membershipStartDate);
+                    txtFieldMembershipFee.setText(String.valueOf(membershipFee));
+                    txtFieldMemberDues.setText(String.valueOf(memberDues));
+                    
+                } while (rs.next());
+            }
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_txtFieldMemberIDActionPerformed
+
+    private void checkBoxDuesClearedActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_checkBoxDuesClearedActionPerformed
+        if(checkBoxDuesCleared.isSelected() && !txtFieldMemberDues.getText().trim().equals("0.00")) {
+            txtFieldMemberDues.setText("0.00");
+        }
+    }//GEN-LAST:event_checkBoxDuesClearedActionPerformed
 
     /**
      * @param args the command line arguments
@@ -358,12 +498,24 @@ public class Member_Modify extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JTextField txtFieldMemberAddress;
+    private javax.swing.JTextField txtFieldMemberDues;
     private javax.swing.JTextField txtFieldMemberEmail;
     private javax.swing.JTextField txtFieldMemberFrom;
     private javax.swing.JTextField txtFieldMemberID;
     private javax.swing.JTextField txtFieldMemberName;
     private javax.swing.JTextField txtFieldMemberPhone;
     private javax.swing.JTextField txtFieldMembershipFee;
-    private javax.swing.JTextField txtFieldMembershipFee1;
     // End of variables declaration//GEN-END:variables
+
+    private void clearInputs() {
+        txtFieldMemberID.setText("");
+        txtFieldMemberName.setText("");
+        txtFieldMemberAddress.setText("");
+        txtFieldMemberPhone.setText("");
+        txtFieldMemberEmail.setText("");
+        txtFieldMemberFrom.setText("");
+        txtFieldMembershipFee.setText("");
+        txtFieldMemberDues.setText("");
+        checkBoxDuesCleared.setSelected(false);    
+    }
 }

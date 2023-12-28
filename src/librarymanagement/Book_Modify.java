@@ -4,6 +4,14 @@
  */
 package librarymanagement;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author prath
@@ -52,6 +60,8 @@ public class Book_Modify extends javax.swing.JFrame {
         jLabel12 = new javax.swing.JLabel();
         jLabel10 = new javax.swing.JLabel();
         jSeparator1 = new javax.swing.JSeparator();
+        txtFieldBookAuthor = new javax.swing.JTextField();
+        jLabel13 = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Modify Book");
@@ -82,6 +92,11 @@ public class Book_Modify extends javax.swing.JFrame {
         jLabel2.setText("Book ID:");
 
         txtFieldBookID.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+        txtFieldBookID.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtFieldBookIDActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(204, 204, 204));
@@ -161,11 +176,17 @@ public class Book_Modify extends javax.swing.JFrame {
 
         jLabel12.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         jLabel12.setForeground(new java.awt.Color(204, 204, 204));
-        jLabel12.setText("(DD-MM-YYYY)");
+        jLabel12.setText("(YYYY-MM-DD)");
 
         jLabel10.setFont(new java.awt.Font("Inter", 1, 18)); // NOI18N
         jLabel10.setForeground(new java.awt.Color(255, 255, 204));
         jLabel10.setText("Details");
+
+        txtFieldBookAuthor.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
+
+        jLabel13.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
+        jLabel13.setForeground(new java.awt.Color(255, 255, 204));
+        jLabel13.setText("Author:");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -176,34 +197,29 @@ public class Book_Modify extends javax.swing.JFrame {
                 .addContainerGap(57, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel11)
+                            .addComponent(jLabel9)
+                            .addComponent(jLabel6)
+                            .addComponent(jLabel8)
+                            .addComponent(jLabel7)
+                            .addComponent(jLabel5)
+                            .addComponent(jLabel4)
+                            .addComponent(jLabel13))
+                        .addGap(18, 18, 18)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel11)
-                                    .addComponent(jLabel9)
-                                    .addComponent(jLabel6)
-                                    .addComponent(jLabel8)
-                                    .addComponent(jLabel7)
-                                    .addComponent(jLabel4)
-                                    .addComponent(jLabel5))
+                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addComponent(txtFieldBookEdition)
+                                    .addComponent(txtFieldBookPublisher)
+                                    .addComponent(txtFieldBookPublisherID)
+                                    .addComponent(txtFieldBookPages)
+                                    .addComponent(txtFieldBookPurchaseDate, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 200, Short.MAX_VALUE)
+                                    .addComponent(txtFieldBookTitle, javax.swing.GroupLayout.Alignment.TRAILING)
+                                    .addComponent(txtFieldBookAuthor, javax.swing.GroupLayout.Alignment.TRAILING))
                                 .addGap(18, 18, 18)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addGroup(jPanel1Layout.createSequentialGroup()
-                                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                            .addComponent(txtFieldBookEdition)
-                                            .addComponent(txtFieldBookTitle)
-                                            .addComponent(txtFieldBookPublisher)
-                                            .addComponent(txtFieldBookPublisherID)
-                                            .addComponent(txtFieldBookPages)
-                                            .addComponent(txtFieldBookPurchaseDate, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
-                                        .addGap(18, 18, 18)
-                                        .addComponent(jLabel12))
-                                    .addComponent(txtFieldBookPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                            .addGroup(jPanel1Layout.createSequentialGroup()
-                                .addGap(153, 153, 153)
-                                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
-                                    .addComponent(jLabel10)
-                                    .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                                .addComponent(jLabel12))
+                            .addComponent(txtFieldBookPrice, javax.swing.GroupLayout.PREFERRED_SIZE, 200, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(67, 67, 67))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                         .addComponent(buttonClear)
@@ -213,23 +229,27 @@ public class Book_Modify extends javax.swing.JFrame {
                         .addComponent(buttonHome)
                         .addGap(40, 40, 40))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                        .addComponent(jLabel2)
-                        .addGap(18, 18, 18)
-                        .addComponent(txtFieldBookID, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jLabel10)
+                            .addGroup(jPanel1Layout.createSequentialGroup()
+                                .addComponent(jLabel2)
+                                .addGap(18, 18, 18)
+                                .addComponent(txtFieldBookID, javax.swing.GroupLayout.PREFERRED_SIZE, 106, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 62, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addGap(18, 18, 18)
                         .addComponent(jLabel3)
-                        .addGap(144, 144, 144))))
+                        .addGap(142, 142, 142))))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addComponent(jPanel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 43, Short.MAX_VALUE)
+                .addGap(46, 46, 46)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
                     .addComponent(txtFieldBookID, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
-                .addGap(29, 29, 29)
+                .addGap(18, 18, 18)
                 .addComponent(jLabel10)
                 .addGap(1, 1, 1)
                 .addComponent(jSeparator1, javax.swing.GroupLayout.PREFERRED_SIZE, 10, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,6 +257,10 @@ public class Book_Modify extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtFieldBookTitle, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel13)
+                    .addComponent(txtFieldBookAuthor, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel5)
@@ -290,18 +314,116 @@ public class Book_Modify extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldBookID.setText("");
-       txtFieldBookTitle.setText("");
-       txtFieldBookPublisher.setText("");
-       txtFieldBookPublisherID.setText("");
-       txtFieldBookEdition.setText("");
-       txtFieldBookPages.setText("");
-       txtFieldBookPurchaseDate.setText("");
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonModifyDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonModifyDataActionPerformed
-        // TODO add your handling code here:
+        if (txtFieldBookID.getText().trim().isEmpty() || txtFieldBookTitle.getText().trim().isEmpty() || txtFieldBookAuthor.getText().trim().isEmpty() || txtFieldBookPublisher.getText().trim().isEmpty() || txtFieldBookPublisherID.getText().trim().isEmpty() || txtFieldBookEdition.getText().trim().isEmpty() || txtFieldBookPages.getText().trim().isEmpty() || txtFieldBookPurchaseDate.getText().trim().isEmpty() || txtFieldBookPrice.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please fill all fields!");
+            return;
+        }
+        
+        int book_id = Integer.parseInt(txtFieldBookID.getText().trim());
+        String book_title = txtFieldBookTitle.getText().trim();
+        String book_author = txtFieldBookAuthor.getText().trim();
+        String book_publisher = txtFieldBookPublisher.getText().trim();
+        int book_pubId = Integer.parseInt(txtFieldBookPublisherID.getText().trim());
+        String book_edition = txtFieldBookEdition.getText().trim();
+        int book_pages = Integer.parseInt(txtFieldBookPages.getText().trim());
+        String book_purchaseDate = txtFieldBookPurchaseDate.getText().trim();
+        double book_price = Double.parseDouble(txtFieldBookPrice.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+
+            PreparedStatement preparedStatement = con.prepareStatement("UPDATE books SET title = ?, author = ?, publisher = ?, publisher_id = ?, edition = ?, pages = ?, purchased_on = ?, price = ? WHERE id = ?");
+
+            preparedStatement.setString(1, book_title.toLowerCase());
+            preparedStatement.setString(2, book_author.toLowerCase());
+            preparedStatement.setString(3, book_publisher.toLowerCase());
+            preparedStatement.setInt(4, book_pubId);
+            preparedStatement.setString(5, book_edition.toLowerCase());
+            preparedStatement.setInt(6, book_pages);
+            preparedStatement.setString(7, book_purchaseDate);
+            preparedStatement.setDouble(8, book_price);
+            preparedStatement.setInt(9, book_id);
+
+            int rowsUpdated = preparedStatement.executeUpdate();
+
+            if (rowsUpdated > 0) {
+                JOptionPane.showMessageDialog(this, book_title + " updated successfully!");
+                clearInputs();
+            } else {
+                JOptionPane.showMessageDialog(this, "No book found with ID: " + book_id);
+            }
+
+            con.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred during update.");
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_buttonModifyDataActionPerformed
+
+    private void txtFieldBookIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldBookIDActionPerformed
+        if (txtFieldBookID.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter the book ID.");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(txtFieldBookID.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        int book_id = Integer.parseInt(txtFieldBookID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM books WHERE id = ?");
+
+            preparedStatement.setInt(1, book_id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "No book with the ID: " + book_id);
+            } else {
+                do {
+                    int bookId = rs.getInt("id");
+                    String bookTitle = rs.getString("title");
+                    String author = rs.getString("author");
+                    String publisher = rs.getString("publisher");
+                    int publisher_id = rs.getInt("publisher_id");
+                    String edition = rs.getString("edition");
+                    int pages = rs.getInt("pages");
+                    String purchased_on = rs.getString("purchased_on");
+                    Double price = rs.getDouble("price");
+
+                    txtFieldBookTitle.setText(bookTitle);
+                    txtFieldBookAuthor.setText(author);
+                    txtFieldBookPublisher.setText(publisher);
+                    txtFieldBookPublisherID.setText(String.valueOf(publisher_id));
+                    txtFieldBookEdition.setText(edition);
+                    txtFieldBookPages.setText(String.valueOf(pages));
+                    txtFieldBookPurchaseDate.setText(String.valueOf(purchased_on));
+                    txtFieldBookPrice.setText(String.valueOf(price));
+
+                } while (rs.next());
+            }
+
+            con.close();
+
+        } catch (ClassNotFoundException | SQLException e) {
+
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+
+        }
+    }//GEN-LAST:event_txtFieldBookIDActionPerformed
 
     /**
      * @param args the command line arguments
@@ -361,6 +483,7 @@ public class Book_Modify extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
     private javax.swing.JLabel jLabel12;
+    private javax.swing.JLabel jLabel13;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
@@ -372,6 +495,7 @@ public class Book_Modify extends javax.swing.JFrame {
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JTextField txtFieldBookAuthor;
     private javax.swing.JTextField txtFieldBookEdition;
     private javax.swing.JTextField txtFieldBookID;
     private javax.swing.JTextField txtFieldBookPages;
@@ -381,4 +505,16 @@ public class Book_Modify extends javax.swing.JFrame {
     private javax.swing.JTextField txtFieldBookPurchaseDate;
     private javax.swing.JTextField txtFieldBookTitle;
     // End of variables declaration//GEN-END:variables
+
+    private void clearInputs() {
+        txtFieldBookID.setText("");
+        txtFieldBookTitle.setText("");
+        txtFieldBookPublisher.setText("");
+        txtFieldBookPublisherID.setText("");
+        txtFieldBookEdition.setText("");
+        txtFieldBookPages.setText("");
+        txtFieldBookPurchaseDate.setText("");
+        txtFieldBookAuthor.setText("");
+        txtFieldBookPrice.setText("");
+    }
 }
