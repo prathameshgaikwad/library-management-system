@@ -4,6 +4,10 @@
  */
 package librarymanagement;
 
+import java.sql.*;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author prath
@@ -82,6 +86,11 @@ public class Publisher_Delete extends javax.swing.JFrame {
         buttonAddData.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         buttonAddData.setForeground(new java.awt.Color(51, 51, 51));
         buttonAddData.setText("Delete Data");
+        buttonAddData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonAddDataActionPerformed(evt);
+            }
+        });
 
         buttonHome.setBackground(new java.awt.Color(204, 255, 255));
         buttonHome.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
@@ -106,9 +115,7 @@ public class Publisher_Delete extends javax.swing.JFrame {
         tablePublisherData.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         tablePublisherData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
                 "ID", "Name", "Address", "City", "Country", "Phone", "Email"
@@ -129,7 +136,11 @@ public class Publisher_Delete extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tablePublisherData.setRowHeight(30);
         jScrollPane1.setViewportView(tablePublisherData);
+        if (tablePublisherData.getColumnModel().getColumnCount() > 0) {
+            tablePublisherData.getColumnModel().getColumn(0).setPreferredWidth(10);
+        }
 
         jLabel3.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 204));
@@ -208,12 +219,89 @@ public class Publisher_Delete extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldPubID.setText("");
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSearchActionPerformed
-        // TODO add your handling code here:
+        if (txtFieldPubID.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter the publisher ID.");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(txtFieldPubID.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        int publisher_id = Integer.parseInt(txtFieldPubID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM publishers WHERE id = ?");
+
+            preparedStatement.setInt(1, publisher_id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            DefaultTableModel model = (DefaultTableModel) tablePublisherData.getModel();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "No publisher with the ID: " + publisher_id);
+            } else {
+                do {
+                    int publisherId = rs.getInt("id");
+                    String publisherName = rs.getString("name");
+                    String publisherAddress = rs.getString("address");
+                    String publisherCity = rs.getString("city");
+                    String publisherCountry = rs.getString("country");
+                    String publisherPhone = rs.getString("phone");
+                    String publisherEmail = rs.getString("email");
+
+                    model.addRow(new Object[]{publisherId, publisherName, publisherAddress, publisherCity, publisherCountry, publisherPhone, publisherEmail});
+
+                } while (rs.next());
+            }
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
     }//GEN-LAST:event_buttonSearchActionPerformed
+
+    private void buttonAddDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonAddDataActionPerformed
+        int publisher_id = Integer.parseInt(txtFieldPubID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("DELETE FROM publishers WHERE id = ?");
+
+            preparedStatement.setInt(1, publisher_id);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                String publisherNameString = "";
+                Object publisherName = tablePublisherData.getValueAt(0, 1);
+
+                if (publisherName != null) {
+                    publisherNameString = publisherName.toString();
+                }
+                JOptionPane.showMessageDialog(this, "Publisher (" + publisherNameString + ") deleted successfully.");
+                clearInputs();
+            } else {
+                JOptionPane.showMessageDialog(this, "No publisher with the ID: " + publisher_id);
+            }
+            con.close();
+        } catch (SQLIntegrityConstraintViolationException e) {
+            JOptionPane.showMessageDialog(this, "Please delete all associated books first!");
+            e.printStackTrace();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_buttonAddDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -272,4 +360,10 @@ public class Publisher_Delete extends javax.swing.JFrame {
     private javax.swing.JTable tablePublisherData;
     private javax.swing.JTextField txtFieldPubID;
     // End of variables declaration//GEN-END:variables
+
+    private void clearInputs() {
+        txtFieldPubID.setText("");
+        DefaultTableModel model = (DefaultTableModel) tablePublisherData.getModel();
+        model.setRowCount(0);
+    }
 }

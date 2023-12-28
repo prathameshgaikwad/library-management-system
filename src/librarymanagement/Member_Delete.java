@@ -4,6 +4,14 @@
  */
 package librarymanagement;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.JOptionPane;
+import javax.swing.table.DefaultTableModel;
+
 /**
  *
  * @author prath
@@ -84,6 +92,11 @@ public class Member_Delete extends javax.swing.JFrame {
         buttonDeleteData.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         buttonDeleteData.setForeground(new java.awt.Color(51, 51, 51));
         buttonDeleteData.setText("Delete Data");
+        buttonDeleteData.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonDeleteDataActionPerformed(evt);
+            }
+        });
 
         buttonHome.setBackground(new java.awt.Color(204, 255, 255));
         buttonHome.setFont(new java.awt.Font("Inter", 0, 14)); // NOI18N
@@ -108,19 +121,17 @@ public class Member_Delete extends javax.swing.JFrame {
         tableMemberData.setFont(new java.awt.Font("Inter", 0, 12)); // NOI18N
         tableMemberData.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null},
-                {null, null, null, null, null, null, null}
+
             },
             new String [] {
-                "ID", "Name", "Address", "Phone", "Email", "Member From", "Membership Fee"
+                "ID", "Name", "Address", "Phone", "Email", "Member From", "Membership Fee", "Dues"
             }
         ) {
             Class[] types = new Class [] {
-                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class
+                java.lang.Integer.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.String.class, java.lang.Double.class, java.lang.Double.class
             };
             boolean[] canEdit = new boolean [] {
-                false, false, false, false, false, false, false
+                false, false, false, false, false, false, false, false
             };
 
             public Class getColumnClass(int columnIndex) {
@@ -131,7 +142,11 @@ public class Member_Delete extends javax.swing.JFrame {
                 return canEdit [columnIndex];
             }
         });
+        tableMemberData.setRowHeight(30);
         jScrollPane1.setViewportView(tableMemberData);
+        if (tableMemberData.getColumnModel().getColumnCount() > 0) {
+            tableMemberData.getColumnModel().getColumn(0).setPreferredWidth(10);
+        }
 
         jLabel3.setFont(new java.awt.Font("Inter", 1, 14)); // NOI18N
         jLabel3.setForeground(new java.awt.Color(255, 255, 204));
@@ -142,6 +157,7 @@ public class Member_Delete extends javax.swing.JFrame {
         jLabel4.setText("Pending Dues: (Rs.)");
 
         txtFieldMemberDues.setEditable(false);
+        txtFieldMemberDues.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
@@ -199,7 +215,7 @@ public class Member_Delete extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel4)
                     .addComponent(txtFieldMemberDues, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 46, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 42, Short.MAX_VALUE)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(buttonClear)
                     .addComponent(buttonDeleteData)
@@ -227,12 +243,88 @@ public class Member_Delete extends javax.swing.JFrame {
     }//GEN-LAST:event_buttonHomeActionPerformed
 
     private void buttonClearActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonClearActionPerformed
-       txtFieldMemberID.setText("");
+        clearInputs();
     }//GEN-LAST:event_buttonClearActionPerformed
 
     private void buttonSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonSearchActionPerformed
-        // TODO add your handling code here:
+        if (txtFieldMemberID.getText().trim().isEmpty()) {
+            JOptionPane.showMessageDialog(this, "Please Enter the member ID.");
+            return;
+        }
+
+        try {
+            int id = Integer.parseInt(txtFieldMemberID.getText().trim());
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
+            return;
+        }
+
+        int member_id = Integer.parseInt(txtFieldMemberID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("SELECT * FROM members WHERE id = ?");
+
+            preparedStatement.setInt(1, member_id);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            DefaultTableModel model = (DefaultTableModel) tableMemberData.getModel();
+
+            if (!rs.next()) {
+                JOptionPane.showMessageDialog(this, "No member with the ID: " + member_id);
+            } else {
+                do {
+                    int memberId = rs.getInt("id");
+                    String memberName = rs.getString("name");
+                    String memberAddress = rs.getString("address");
+                    String memberPhone = rs.getString("phone");
+                    String memberEmail = rs.getString("email");
+                    String membershipStartDate = String.valueOf(rs.getDate("membership_start_date"));
+                    Double membershipFee = rs.getDouble("membership_fee");
+                    Double memberDues = rs.getDouble("dues");
+
+                    model.addRow(new Object[]{memberId, memberName, memberAddress, memberPhone, memberEmail, membershipStartDate, membershipFee, memberDues});
+                    txtFieldMemberDues.setText(String.valueOf(memberDues));
+                } while (rs.next());
+            }
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+
     }//GEN-LAST:event_buttonSearchActionPerformed
+
+    private void buttonDeleteDataActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonDeleteDataActionPerformed
+        int member_id = Integer.parseInt(txtFieldMemberID.getText().trim());
+
+        try {
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
+            PreparedStatement preparedStatement = con.prepareStatement("DELETE FROM members WHERE id = ?");
+
+            preparedStatement.setInt(1, member_id);
+            int rowsAffected = preparedStatement.executeUpdate();
+
+            if (rowsAffected > 0) {
+                String memberNameString = "";
+                Object memberName = tableMemberData.getValueAt(0, 1);
+
+                if (memberName != null) {
+                    memberNameString = memberName.toString();
+                }
+                JOptionPane.showMessageDialog(this, "Member (" + memberNameString + ") deleted successfully.");
+                clearInputs();
+            } else {
+                JOptionPane.showMessageDialog(this, "No member with the ID: " + member_id);
+            }
+            con.close();
+        } catch (ClassNotFoundException | SQLException e) {
+            JOptionPane.showMessageDialog(this, "Some error occurred.");
+            e.printStackTrace();
+        }
+    }//GEN-LAST:event_buttonDeleteDataActionPerformed
 
     /**
      * @param args the command line arguments
@@ -301,4 +393,11 @@ public class Member_Delete extends javax.swing.JFrame {
     private javax.swing.JTextField txtFieldMemberDues;
     private javax.swing.JTextField txtFieldMemberID;
     // End of variables declaration//GEN-END:variables
+
+    private void clearInputs() {
+        txtFieldMemberID.setText("");
+        txtFieldMemberDues.setText("");
+        DefaultTableModel model = (DefaultTableModel) tableMemberData.getModel();
+        model.setRowCount(0);
+    }
 }

@@ -226,7 +226,7 @@ public class Book_Delete extends javax.swing.JFrame {
         }
 
         try {
-            int pages = Integer.parseInt(txtFieldBookID.getText().trim());
+            int id = Integer.parseInt(txtFieldBookID.getText().trim());
         } catch (NumberFormatException e) {
             JOptionPane.showMessageDialog(this, "ID should be an integer");
             return;
