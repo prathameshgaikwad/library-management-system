@@ -361,18 +361,27 @@ public class Book_Add extends javax.swing.JFrame {
             clearInputs();
 
         } catch (ClassNotFoundException | SQLException e) {
-            JOptionPane.showMessageDialog(this, "Some error occurred.");
-            e.printStackTrace();
+
+            if (e instanceof java.sql.SQLIntegrityConstraintViolationException) {
+                String errorMessage = e.getMessage();
+                if (errorMessage.contains("FOREIGN KEY (`publisher_id`) REFERENCES `publishers`")) {
+                    JOptionPane.showMessageDialog(null, "Please add the publisher first, then try adding the book.");
+                }
+            } else {
+                JOptionPane.showMessageDialog(this, "Some error occurred.");
+                e.printStackTrace();
+            }
+
         }
     }//GEN-LAST:event_buttonAddDataActionPerformed
 
     private void txtFieldPublisherNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldPublisherNameActionPerformed
-       
+
     }//GEN-LAST:event_txtFieldPublisherNameActionPerformed
 
     private void txtFieldPublisherIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldPublisherIdActionPerformed
-         int book_pubId = Integer.parseInt(txtFieldPublisherId.getText().trim());
-        
+        int book_pubId = Integer.parseInt(txtFieldPublisherId.getText().trim());
+
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
@@ -396,7 +405,6 @@ public class Book_Add extends javax.swing.JFrame {
 
     private void txtFieldBookIDActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtFieldBookIDActionPerformed
 
-        
         try {
             Class.forName("com.mysql.cj.jdbc.Driver");
             Connection con = DriverManager.getConnection("jdbc:mysql://localhost:3306/library", "root", "root");
@@ -410,7 +418,7 @@ public class Book_Add extends javax.swing.JFrame {
                 int newBookId = bookID + 1;
                 txtFieldBookID.setText(newBookId + "");
             } else {
-                System.out.println("don't know");
+                System.out.println("Can't process request");
             }
 
         } catch (ClassNotFoundException | SQLException e) {

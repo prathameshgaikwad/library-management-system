@@ -284,7 +284,7 @@ public class Publisher_Add extends javax.swing.JFrame {
         try {
             int intValue = Integer.parseInt(txtFieldPubID.getText());
         } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "id should be an integer");
+            JOptionPane.showMessageDialog(this, "ID should be an integer");
             return;
         }
 
@@ -345,7 +345,7 @@ public class Publisher_Add extends javax.swing.JFrame {
                 int newPubID = pubID + 1;
                 txtFieldPubID.setText(newPubID + "");
             } else {
-                System.out.println("don't know");
+                System.out.println("Can't process request");
             }
 
         } catch (ClassNotFoundException | SQLException e) {
